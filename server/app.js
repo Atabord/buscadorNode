@@ -14,6 +14,31 @@ const getAll = (req, res) => {
   res.json(data);
 }
 
+const getHouses = (req, res) => {
+  const { city, type, minPrice, maxPrice } = req.query;
+  const houses = data.filter(house => {
+    let matchCity = true;
+    let matchType = true;
+    let matchPrice = false;
+    if(city){
+      house.Ciudad === city ? matchCity = true : matchCity = false;
+    }
+    if(type){
+      house.Tipo === type ? matchType = true : matchType = false;
+    }
+
+    let housePrice = house.Precio.slice(1);
+    housePrice = housePrice.split(',').join('');
+    housePrice = parseInt(housePrice);
+
+    if(housePrice >= parseInt(minPrice) && housePrice <= parseInt(maxPrice)) {
+      matchPrice = true
+    }
+    return matchCity && matchType && matchPrice;
+  });
+  res.json(houses);
+}
+
 const getMetaData = (req, res) => {
   const houses = data.reduce((total, current) => {
     return {
@@ -29,6 +54,7 @@ const getMetaData = (req, res) => {
 }
 
 app.get('/getAll', getAll);
+app.get('/getHouses', getHouses)
 app.get('/getMetaData', getMetaData);
 
 module.exports = app;
